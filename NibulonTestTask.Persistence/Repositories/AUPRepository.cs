@@ -20,20 +20,18 @@ namespace NibulonTestTask.Persistence.Repositories
             return await _context.AUPs.ToListAsync();
         }
 
-        public AUP CreateAUPObject(PostalIndex postalIndex, IEnumerable<City> cities)
+        public AUP CreateAUPObject(PostalIndex postalIndex, IEnumerable<City> cities, IEnumerable<OBL> obls, IEnumerable<KRAJ> krajs)
         {
-            var city = cities.FirstOrDefault(c =>
-                c.CITY == postalIndex.City &&
-                (c.Obl?.NOBL == postalIndex.Region || c.OBL_KOD is null) &&
-                (c.Kraj?.NRAJ == postalIndex.District || c.KRAJ_KOD is null)
-            );
+            var city = cities.FirstOrDefault(c => c.CITY == postalIndex.City);
+            var obl = obls.FirstOrDefault(o => o.NOBL == postalIndex.Region);
+            var kraj = krajs.FirstOrDefault(k => k.NRAJ == postalIndex.District);
 
             var aup = new AUP 
             {
                 INDEX_A = postalIndex.Index,
                 CITY_KOD = city is not null ? city.CITY_KOD : null,
-                OBL_KOD = city is not null ? city.Obl?.KOBL : null,
-                RAJ_KOD = city is not null ? city.Kraj?.KRAJ_ID : null
+                OBL_KOD = obl is not null ? obl.KOBL : null,
+                RAJ_KOD = kraj is not null ? kraj.KRAJ_ID : null
             };
 
             return aup;

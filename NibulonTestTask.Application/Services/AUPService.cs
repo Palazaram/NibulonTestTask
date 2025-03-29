@@ -18,9 +18,9 @@ namespace NibulonTestTask.Application.Services
             return await _aup.GetAUPsAsync();
         }
 
-        public AUP CreateAUPObject(PostalIndex postalIndex, IEnumerable<City> cities)
+        public AUP CreateAUPObject(PostalIndex postalIndex, IEnumerable<City> cities, IEnumerable<OBL> obls, IEnumerable<KRAJ> krajs)
         {
-            return _aup.CreateAUPObject(postalIndex, cities);
+            return _aup.CreateAUPObject(postalIndex, cities, obls, krajs);
         }
 
         public async Task AddRangeAsync(IEnumerable<AUP> aups)

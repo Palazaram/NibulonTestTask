@@ -11,11 +11,15 @@ namespace NibulonTestTask.Controllers
     {
         private readonly AUPService _aupService;
         private readonly CityService _cityService;
+        private readonly OBLService _oblService;
+        private readonly KRAJService _krajService;
 
-        public AUPController(AUPService aupService, CityService cityService)
+        public AUPController(AUPService aupService, CityService cityService, OBLService oblService, KRAJService krajService)
         {
             _aupService = aupService;
             _cityService = cityService;
+            _oblService = oblService;
+            _krajService = krajService;
         }
 
         [HttpGet]
@@ -53,8 +57,10 @@ namespace NibulonTestTask.Controllers
                         await _aupService.TruncateAUPTableAsync();
                     }
 
-                    // Довідник міст
+                    // Довідники міст, областей та районів
                     var cityList = await _cityService.GetCitiesAsync();
+                    var oblList = await _oblService.GetOBLsAsync();
+                    var krajList = await _krajService.GetKRAJsAsync();
 
                     // Використовуємо саме лінкед лист для оптимізації, оскільки багато операцій вставки
                     var result = new LinkedList<AUP>();
@@ -81,7 +87,7 @@ namespace NibulonTestTask.Controllers
                                     Index = worksheet.Cells[row, 6].Text
                                 };
 
-                                result.AddLast(_aupService.CreateAUPObject(postalIndex, cityList));
+                                result.AddLast(_aupService.CreateAUPObject(postalIndex, cityList, oblList, krajList));
                             }
                         }
                     }
