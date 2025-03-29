@@ -24,6 +24,8 @@
 
 ![image](https://github.com/user-attachments/assets/aa7346d7-48f1-422e-b030-67028a03f9b0)
 
+Дані для таблиць OBLs, KRAJs, Cities створюються автоматично під час першого застосування міграції.
+
 ## Запуск програми
 
 Щоб запустити програму, оновіть рядок підключення до бази даних у `NibulonTestTask --> appsettings.Development.json`.
