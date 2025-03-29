@@ -1,0 +1,144 @@
+﻿
+<style>
+    .loading-screen {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-size: 24px;
+        z-index: 9999;
+    }
+</style>
+
+<div id="" class="loading-screen" style="">
+    Завантаження даних...
+</div>
+
+
+<div class="container">
+    
+    <button class="btn btn-primary" id="uploadPostalIndexes">Завантажити поштові індекси</button>
+    <input type="file" id="fileUpload" accept=".xlsx, .xls" style="display: none;" />
+
+    <partial name="AUPsPartial" />
+
+</div>
+
+
+
+
+@section Scripts {
+    <script type="text/javascript">
+
+        $(function () {
+
+            $('.loading-screen').show();
+
+            let exportOptions = {
+                customizeData: function (data) {
+                    data.headerStructure.pop();
+                }
+            };
+
+
+
+            $('#AUPsTable').DataTable({
+                responsive: true,
+                orderCellsTop: true,
+                layout: 
+                {
+                    topStart: 
+                    {
+                        pageLength: {},
+                        buttons: 
+                        [
+                            {
+                                extend: 'collection',
+                                text: 'Export',
+                                buttons: 
+                                [
+                                    { extend: 'copyHtml5', exportOptions: exportOptions },
+                                    { extend: 'excelHtml5', exportOptions: exportOptions },
+                                    { extend: 'pdfHtml5', exportOptions: exportOptions },
+                                    { extend: 'csv', exportOptions: exportOptions }
+                                ]
+                            }
+                        ]
+                    }
+                },
+                initComplete: function () 
+                {
+                    $('#dt-length-0').addClass('me-2');
+                    $('.loading-screen').hide();
+                    $('#AUPsTable').show();
+
+                    var api = this.api();
+                    api.columns([2, 4, 6]).every(function () 
+                    {
+                        var column = this;
+                        $('<select class="form-select">' +
+                        '<option value="">Усі</option>' +
+                        '<option value="hasValue">Є значення</option>' +
+                        '<option value="noValue">Немає значення</option>' +
+                        '</select>')
+                        .appendTo($("#AUPsTable thead tr:eq(1) th").eq(column.index()).empty())
+                        .on('change', function () 
+                        {
+                            var val = $(this).val();
+                            if (val === "hasValue") {
+                                column.search("^(?!\\s*$).+", true, false).draw();
+                            } else if (val === "noValue") {
+                                column.search("^\\s*$", true, false).draw();
+                            } else {
+                                column.search("", true, false).draw();
+                            }
+                        });
+                    });
+                }
+            });
+
+
+
+            $('#uploadPostalIndexes').click(function () {
+                $('#fileUpload').click();
+            });
+
+            $('#fileUpload').change(function () {
+                var file = this.files[0];
+
+                if (!file) return;
+
+                var formData = new FormData();
+                formData.append("file", file);
+
+                $.ajax({
+                    url: "/AUP/UploadPostalIndexes",
+                    type: "POST",
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function () {
+                        $('.loading-screen').show();
+                    },
+                    success: function (response) {
+                        location.reload();
+                    },
+                    error: function (response) {
+                        let errorMessage = response.responseJSON?.message || "Невідома помилка";
+                        alert("Помилка при завантаженні файлу!" + " " + errorMessage);
+                        location.reload();
+                    }
+                });
+            });
+
+        });
+
+    </script>
+}

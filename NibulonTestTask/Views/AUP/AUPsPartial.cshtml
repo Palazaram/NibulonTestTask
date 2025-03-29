@@ -1,0 +1,50 @@
+﻿﻿@using NibulonTestTask.Core.Models
+@model IEnumerable<AUP>
+
+
+<table id="AUPsTable" class="table table-striped table-hover" style="display:none;">
+
+    <thead>
+        <tr style="white-space: nowrap;">
+            <th>Індекс адреси</th>
+            <th>Місто. Код</th>
+            <th>Місто. Найменування</th>
+            <th>Область. Код</th>
+            <th>Область. Найменування</th>
+            <th>Район. Код</th>
+            <th>Район. Найменування</th>
+        </tr>
+
+        <tr data-dt-order="disable">
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @if (Model is not null && Model.Any())
+        {
+            foreach (var aup in Model)
+            {
+                <tr>
+                    <td>@aup?.INDEX_A</td>
+                    <td>@aup?.City?.CITY_KOD</td>
+                    <td>@aup?.City?.CITY</td>
+                    <td>@aup?.Obl?.KOBL</td>
+                    <td>@aup?.Obl?.NOBL</td>
+                    <td>@aup?.Kraj?.KRAJ_ID</td>
+                    <td>@aup?.Kraj?.NRAJ</td>
+                </tr>
+            }
+        }
+        
+    </tbody>
+
+</table>
